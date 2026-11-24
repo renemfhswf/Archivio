@@ -23,8 +23,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "dist": "npm run build && electron-builder",
-    "dist:win": "npm run build && electron-builder --win nsis portable",
-    "dist:win:dir": "npm run build && electron-builder --win --dir",
+    "dist:win": "npm run build && electron-builder --win nsis portable --publish never",
+    "dist:win:dir": "npm run build && electron-builder --win --dir --publish never",
     "icon": "python3 scripts/generate-icon.py"
   },
   "dependencies": {

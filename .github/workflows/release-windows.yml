@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: release-${{ github.ref }}
@@ -57,6 +58,25 @@ jobs:
             tail -n 300 build-windows.log || true
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fehlerprotokoll als Issue ablegen
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "Der Windows-Build ist fehlgeschlagen."
+            echo ""
+            echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo ""
+            echo '```text'
+            tail -n 400 build-windows.log 2>/dev/null || echo "Kein Build-Protokoll vorhanden."
+            echo '```'
+          } > build-failure.md
+          gh issue create \
+            --title "Windows-Build fehlgeschlagen (Run $GITHUB_RUN_ID)" \
+            --body-file build-failure.md
 
       - name: Build-Artefakte hochladen
         uses: actions/upload-artifact@v4
