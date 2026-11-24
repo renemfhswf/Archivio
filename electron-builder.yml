@@ -7,6 +7,10 @@ directories:
 files:
   - out/**/*
   - package.json
+  # Alle Abhängigkeiten sind in den Renderer gebündelt; der Hauptprozess
+  # benötigt nur Electron und Node-Bordmittel. Das hält den Installer klein
+  # und vermeidet lange Pfade beim Windows-Build.
+  - '!node_modules/**/*'
 asar: true
 compression: maximum
 win:

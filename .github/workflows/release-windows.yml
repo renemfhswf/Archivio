@@ -39,9 +39,24 @@ jobs:
         run: npm test
 
       - name: Installer und portable Version bauen
-        run: npm run dist:win
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run dist:win 2>&1 | tee build-windows.log
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Fehlerprotokoll veröffentlichen
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo "## Windows-Build fehlgeschlagen"
+            echo ""
+            echo '```text'
+            tail -n 300 build-windows.log || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build-Artefakte hochladen
         uses: actions/upload-artifact@v4
